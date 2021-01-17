@@ -1,24 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import { createMuiTheme, ThemeProvider } from "@material-ui/core";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import React, { lazy, useContext } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { AppContext } from "./context/index";
+const MyApp = lazy(() => import("./layout/theLayout"));
 
 function App() {
+  const { myTheme, mainPrimaryColor, mainSecondaryColor } = useContext(
+    AppContext
+  );
+
+  const theme = React.useMemo(
+    () =>
+      createMuiTheme({
+        palette: {
+          type: myTheme,
+          primary: {
+            main: mainPrimaryColor,
+          },
+          secondary: {
+            main: mainSecondaryColor,
+          },
+        },
+      }),
+    [myTheme]
+  );
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <React.Suspense fallback={() => <p>loading</p>}>
+          <Switch>
+            <Route
+              path="/"
+              name="Home"
+              render={(props) => <MyApp {...props} />}
+            />
+          </Switch>
+        </React.Suspense>
+      </Router>
+    </ThemeProvider>
   );
 }
 
